@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scoreboard</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      display: flex;
+      height: 85vh;
+      width: 100%;
+    }
+    .left, .right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12vw;
+      font-family: 'Sports Jersey', sans-serif;
+      color: white;
+      user-select: none;
+      touch-action: none;
+    }
+    .left {
+      background-color: blue;
+    }
+    .right {
+      background-color: red;
+    }
+    .reset-button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 15vh;
+      background-color: black;
+    }
+    .reset-button {
+      font-size: 5vw;
+      padding: 10px 20px;
+      cursor: pointer;
+      border: none;
+      background-color: white;
+      color: black;
+      font-family: 'Sports Jersey', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left" onmousedown="startTouch(event, 'left')" ontouchstart="startTouch(event, 'left')">0</div>
+    <div class="right" onmousedown="startTouch(event, 'right')" ontouchstart="startTouch(event, 'right')">0</div>
+  </div>
+  <div class="reset-button-container">
+    <button class="reset-button" onclick="resetScores()">Reset</button>
+  </div>
+
+  <script>
+    let leftScore = 0;
+    let rightScore = 0;
+    let startY = 0;
+    let swipeHandled = false;
+
+    function startTouch(event, side) {
+      event.preventDefault();
+      startY = event.touches ? event.touches[0].clientY : event.clientY;
+      swipeHandled = false;
+      document.querySelector(`.${side}`).addEventListener('touchend', (e) => handleSwipe(e, side), { once: true });
+      document.querySelector(`.${side}`).addEventListener('mouseup', (e) => handleSwipe(e, side), { once: true });
+    }
+
+    function handleSwipe(event, side) {
+      if (swipeHandled) return;
+      let currentY = event.changedTouches ? event.changedTouches[0].clientY : event.clientY;
+      let deltaY = startY - currentY;
+      if (deltaY > 50) {
+        increment(side);
+      } else if (deltaY < -50) {
+        decrement(side);
+      }
+      swipeHandled = true;
+    }
+
+    function increment(side) {
+      if (side === 'left') {
+        leftScore++;
+        document.querySelector('.left').textContent = leftScore;
+      } else if (side === 'right') {
+        rightScore++;
+        document.querySelector('.right').textContent = rightScore;
+      }
+    }
+
+    function decrement(side) {
+      if (side === 'left' && leftScore > 0) {
+        leftScore--;
+        document.querySelector('.left').textContent = leftScore;
+      } else if (side === 'right' && rightScore > 0) {
+        rightScore--;
+        document.querySelector('.right').textContent = rightScore;
+      }
+    }
+
+    function resetScores() {
+      leftScore = 0;
+      rightScore = 0;
+      document.querySelector('.left').textContent = leftScore;
+      document.querySelector('.right').textContent = rightScore;
+    }
+  </script>
+</body>
+</html>
